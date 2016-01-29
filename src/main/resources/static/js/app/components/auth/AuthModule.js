@@ -13,11 +13,25 @@ var AuthenticationService = function(http){
 			}
 		}
 	};
-}
+};
 
-var LoginController = function(scope,authenticationService){
+var LoginViewService = function(){
+	return{
+		showLoginBox : function(){
+			$('#signUpModal').modal('hide');
+			$('#loginModal').modal('show');
+		},
+		showSignUpBox : function(){
+			$('#loginModal').modal('hide');
+			$('#signUpModal').modal('show');
+		}
+	};
+};
+
+var LoginController = function(scope,authenticationService,loginViewService){
 	this.scope = scope;
 	this.authenticationService = authenticationService;
+	this.loginViewService = loginViewService;
 	scope.loginController = this;
 	scope.username = '';
 	scope.password = '';
@@ -38,9 +52,20 @@ LoginController.prototype.login = function(){
 		}
 	});
 };
+LoginController.prototype.showLoginBox = function(){
+	this.loginViewService.showLoginBox();
+};
+
+LoginController.prototype.showSignUpBox = function(){
+	this.loginViewService.showSignUpBox();
+};
+
+
 authModule.factory('authenticationService', ['$http',AuthenticationService]);
-authModule.controller('loginController', ['$scope','authenticationService',LoginController]);
+authModule.factory('loginViewService', [LoginViewService]);
+
+authModule.controller('loginController', ['$scope','authenticationService','loginViewService',LoginController]);
 
 angular.element(document).ready(function(){
-	$('#myModal').modal('show');
+	LoginViewService().showLoginBox();
 });
